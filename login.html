@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login | VoteVibes</title>
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+
+    <!-- Font Awesome for Dove Icon -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+    <!-- CSS -->
+    <link rel="stylesheet" href="login.css">
+</head>
+<body>
+    <header>
+        <div class="container">
+            <h1><i class="fa-solid fa-dove"></i>VoteVibes</h1>
+            <nav>
+                <ul>
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="upcoming.html">Upcoming Elections</a></li>
+                    <li><a href="election-register.html">Election Registration</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <section class="form-section">
+            <h2>Login</h2>
+            <form id="loginForm">
+                <!-- Credentials Step -->
+                <div id="credentialsStep">
+                    <label for="identifier">Roll Number / Admin ID / Email</label>
+                    <input type="text" id="identifier" name="identifier" placeholder="Enter Roll Number, Admin ID, or Email" required>
+
+                    <label for="password">Password</label>
+                    <input type="password" id="password" name="password" placeholder="Enter your password" required>
+                </div>
+
+                <!-- OTP Field -->
+                <input id="otpField" placeholder="Enter OTP" style="display:none;">
+
+                <button type="button" id="sendOtpBtn">Send OTP</button>
+                <button type="submit">Login</button>
+            </form>
+        </section>
+    </main>
+
+    <footer>
+        <p>&copy; 2025 VoteVibes. All Rights Reserved.</p>
+    </footer>
+
+    <script>
+        document.getElementById("sendOtpBtn").addEventListener("click", () => {
+            document.getElementById("otpField").style.display = "block";
+            alert("OTP sent to your email (demo)");
+        });
