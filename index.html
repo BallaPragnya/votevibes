@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>VoteVibes | E-Voting Portal</title>
 
-  <!-- Font Awesome for Dove Icon -->
+  <!-- Font Awesome for Dove & Profile Icon -->
   <link
     rel="stylesheet"
     href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
@@ -34,6 +34,11 @@
 
       <div class="nav-actions">
         <a href="login.html" class="btn-outline">Login</a>
+        <!-- Profile Icon -->
+      <div class="profile-menu"> <i class="fa-solid fa-circle-user profile-icon">
+        </i> <div class="dropdown hidden"> <a href="profile.html">
+        <i class="fa-solid fa-user"></i> Profile</a> <a href="index.html">
+        <i class="fa-solid fa-right-from-bracket"></i> Logout</a> </div> </div>
       </div>
     </nav>
   </header>
@@ -149,6 +154,24 @@
   </footer>
 
   <!-- JS -->
-  <script src="index.js"></script>
+  <script>
+    const profileIcon = document.querySelector(".profile-icon");
+    const dropdown = document.querySelector(".dropdown");
+
+    // Toggle dropdown
+    profileIcon.addEventListener("click", (e) => {
+      dropdown.classList.toggle("hidden");
+      e.stopPropagation();
+    });
+
+    // Close dropdown if clicking outside
+    document.addEventListener("click", (e) => {
+      if (!dropdown.classList.contains("hidden") && !dropdown.contains(e.target) && e.target !== profileIcon) {
+        dropdown.classList.add("hidden");
+      }
+    });
+    
+  </script>
 </body>
 </html>
+
