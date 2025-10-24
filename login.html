@@ -1,61 +1,74 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login | VoteVibes</title>
-
-    <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
-
-    <!-- Font Awesome for Dove Icon -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-
-    <!-- CSS -->
-    <link rel="stylesheet" href="login.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login | VoteVibes</title>
+  <link rel="stylesheet" href="./login.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 </head>
 <body>
-    <header>
-        <div class="container">
-            <h1><i class="fa-solid fa-dove"></i>VoteVibes</h1>
-            <nav>
-                <ul>
-                    <li><a href="index.html">Home</a></li>
-                    <li><a href="upcoming.html">Upcoming Elections</a></li>
-                    <li><a href="election-register.html">Election Registration</a></li>
-                </ul>
-            </nav>
+  <nav class="navbar">
+    <div class="logo"><i class="fa-solid fa-dove"></i> VoteVibes</div>
+    <ul class="nav-links">
+      <li><a href="index.html">Home</a></li>
+      <li><a href="upcoming.html">Upcoming Elections</a></li>
+      <li><a href="register.html">Election Registration</a></li>
+    </ul>
+  </nav>
+
+  <main>
+    <div class="form-container">
+      <h2>Login</h2>
+      <form id="loginForm">
+        <label>Roll Number / Admin ID / Email</label>
+        <input type="text" placeholder="Enter Roll Number, Admin ID, or Email" required>
+
+        <label>Password</label>
+        <div class="password-container">
+          <input type="password" id="password" placeholder="Enter your password" required>
+          <i class="fa-solid fa-eye" id="togglePassword"></i>
         </div>
-    </header>
 
-    <main>
-        <section class="form-section">
-            <h2>Login</h2>
-            <form id="loginForm">
-                <!-- Credentials Step -->
-                <div id="credentialsStep">
-                    <label for="identifier">Roll Number / Admin ID / Email</label>
-                    <input type="text" id="identifier" name="identifier" placeholder="Enter Roll Number, Admin ID, or Email" required>
+        <div class="forgot-link">
+          <a href="forgot.html">Forgot Password?</a>
+        </div>
 
-                    <label for="password">Password</label>
-                    <input type="password" id="password" name="password" placeholder="Enter your password" required>
-                </div>
+        <!-- OTP container hidden initially -->
+        <div id="otpContainer">
+          <label>Enter OTP</label>
+          <input type="text" placeholder="Enter OTP">
+        </div>
 
-                <!-- OTP Field -->
-                <input id="otpField" placeholder="Enter OTP" style="display:none;">
+        <button type="button" class="btn btn-secondary" id="sendOtpBtn">Send OTP</button>
+        <button type="submit" class="btn btn-primary">Login</button>
+      </form>
+    </div>
+  </main>
 
-                <button type="button" id="sendOtpBtn">Send OTP</button>
-                <button type="submit">Login</button>
-            </form>
-        </section>
-    </main>
+  <footer class="site-footer">
+    <p>© 2025 VoteVibes. All Rights Reserved.</p>
+  </footer>
 
-    <footer>
-        <p>&copy; 2025 VoteVibes. All Rights Reserved.</p>
-    </footer>
+  <script>
+    const sendOtpBtn = document.getElementById('sendOtpBtn');
+    const otpContainer = document.getElementById('otpContainer');
+    const togglePassword = document.getElementById('togglePassword');
+    const passwordField = document.getElementById('password');
 
-    <script>
-        document.getElementById("sendOtpBtn").addEventListener("click", () => {
-            document.getElementById("otpField").style.display = "block";
-            alert("OTP sent to your email (demo)");
-        });
+    sendOtpBtn.addEventListener('click', () => {
+      otpContainer.classList.add('show');
+      sendOtpBtn.disabled = true;
+      sendOtpBtn.innerText = 'OTP Sent';
+    });
+
+    togglePassword.addEventListener('click', () => {
+      const type = passwordField.getAttribute('type') === 'password' ? 'text' : 'password';
+      passwordField.setAttribute('type', type);
+      togglePassword.classList.toggle('fa-eye');
+      togglePassword.classList.toggle('fa-eye-slash');
+    });
+  </script>
+</body>
+</html>
+
