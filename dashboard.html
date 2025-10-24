@@ -14,16 +14,25 @@
   <header class="navbar">
     <div class="logo"><i class="fa-solid fa-dove"></i> VoteVibes</div>
     <ul class="nav-links">
+      
       <li><a href="index.html">Home</a></li>
+      <li><a href="register.html">Register</a></li>
       <li><a href="dashboard.html" class="active">Voter Dashboard</a></li>
-      <li><a href="candidate.html">Candidate</a></li>
+      <!-- <li><a href="candidate.html">Candidate</a></li> -->
+      <li><a href="ballot.html">Vote</a></li>
+      <li><a href="result.html">Results</a></li>
       <li><a href="upcoming.html">Upcoming Elections</a></li>
-      <li><a href="results.html">Results</a></li>
       <li><a href="about.html">About Us</a></li>
     </ul>
     <div class="nav-actions">
       <a href="register.html" class="btn">Register</a>
       <a href="login.html" class="btn-outline">Login</a>
+      <!-- Profile Icon -->
+      <div class="profile-menu"> <i class="fa-solid fa-circle-user profile-icon">
+        </i> <div class="dropdown hidden"> <a href="profile.html">
+        <i class="fa-solid fa-user"></i> Profile</a> <a href="index.html">
+        <i class="fa-solid fa-right-from-bracket"></i> Logout</a> </div> </div>
+      </div>
     </div>
   </header>
 
@@ -92,6 +101,26 @@
       &copy; 2025 VoteVibes. All Rights Reserved.
     </div>
   </footer>
+
+  <script>
+    const profileIcon = document.querySelector(".profile-icon");
+    const dropdown = document.querySelector(".dropdown");
+
+    // Toggle dropdown
+    profileIcon.addEventListener("click", (e) => {
+      dropdown.classList.toggle("hidden");
+      e.stopPropagation();
+    });
+
+    // Close dropdown if clicking outside
+    document.addEventListener("click", (e) => {
+      if (!dropdown.classList.contains("hidden") && !dropdown.contains(e.target) && e.target !== profileIcon) {
+        dropdown.classList.add("hidden");
+      }
+    });
+    
+  </script>
+
 
 </body>
 </html>
