@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Ballot | VoteVibes</title>
+  <link rel="stylesheet" href="dashboard.css" />
+  <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+  />
+</head>
+<body>
+
+  <!-- Navbar -->
+  <header class="navbar">
+    <div class="logo"><i class="fa-solid fa-dove"></i> VoteVibes</div>
+    <ul class="nav-links">
+      <li><a href="dashboard.html">Dashboard</a></li>
+      <li><a href="active.html">Active Elections</a></li>
+      <li><a href="ballot.html" class="active">Ballot</a></li>
+      <li><a href="result.html">Results</a></li>
+      <li><a href="upcoming.html">Upcoming</a></li>
+    </ul>
+
+    <div class="nav-actions">
+      <div class="profile-menu">
+        <i class="fa-solid fa-circle-user profile-icon"></i>
+        <div class="dropdown hidden">
+          <a href="profile.html"><i class="fa-solid fa-user"></i> Profile</a>
+          <a onclick="logoutUser()"><i class="fa-solid fa-right-from-bracket"></i> Logout</a>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Page Title -->
+  <section class="welcome">
+    <h2>🗳️ Cast Your Vote</h2>
+    <p id="electionTitle">Loading election...</p>
+  </section>
+
+  <!-- Candidate Cards -->
+  <main class="features" id="candidateContainer"></main>
+
+  <!-- Confirmation Popup -->
+  <div id="confirmPopup" class="confirm-popup hidden">
+    <div class="confirm-box">
+      <h3>Confirm Your Vote</h3>
+      <p id="confirmText"></p>
+      <div class="confirm-buttons">
+        <button class="confirm-btn cancel" onclick="closeConfirmPopup()">Cancel</button>
+        <button class="confirm-btn proceed" onclick="confirmVote()">Confirm</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer class="site-footer">
+    <div class="footer-content">
+      <div>
+        <h4>About VoteVibes</h4>
+        <p>Secure online voting platform for students.</p>
+      </div>
+      <div>
+        <h4>Quick Links</h4>
+        <ul>
+          <li><a href="dashboard.html">Dashboard</a></li>
+          <li><a href="result.html">Results</a></li>
+          <li><a href="upcoming.html">Upcoming</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">&copy; 2025 VoteVibes. All Rights Reserved.</div>
+  </footer>
+
+  <script>
+    /* ===== Read election from URL ===== */
+    const params = new URLSearchParams(window.location.search);
+    const electionName = params.get("election");
+
+    const titleElement = document.getElementById("electionTitle");
+    if (electionName) {
+      titleElement.innerHTML = `Select your preferred candidate for <strong>${electionName}</strong>.`;
+    } else {
+      titleElement.innerText = "Election not specified!";
+    }
+
+    /* ===== All Elections & Candidates ===== */
+    const electionData = {
+      "Student Council Election 2025": [
+        { name: "Riya Sharma", dept: "CSE Department" },
+        { name: "Aarav Patel", dept: "Electrical Department" },
+        { name: "Sneha Verma", dept: "Mechanical Department" },
+      ],
+      "Sports Captain Election 2026": [
+        { name: "Ishaan Mehta", dept: "Civil Department" },
+        { name: "Priya Nair", dept: "IT Department" },
+        { name: "Karan Singh", dept: "Mechanical Department" },
+      ],
+    };
+
+    const candidates = electionData[electionName] || [];
+    const container = document.getElementById("candidateContainer");
+
+    if (candidates.length === 0) {
+      container.innerHTML = "<p style='text-align:center;'>No candidates found for this election.</p>";
+    } else {
+      candidates.forEach((c) => {
+        const card = document.createElement("div");
+        card.className = "card candidate-card";
+        card.innerHTML = `
+          <div class="candidate-icon"><i class="fa-solid fa-user-tie"></i></div>
+          <h3>${c.name}</h3>
+          <p>${c.dept}</p>
+          <button class="small-btn" onclick="openConfirmPopup('${c.name}')">Vote</button>
+        `;
+        container.appendChild(card);
+      });
+    }
+
+    /* ===== Custom Confirmation Popup ===== */
+    let selectedCandidate = null;
+
+    function openConfirmPopup(candidateName) {
+      selectedCandidate = candidateName;
+      document.getElementById("confirmText").innerHTML = `Are you sure you want to vote for <strong>${candidateName}</strong>?`;
+      document.getElementById("confirmPopup").classList.remove("hidden");
+    }
+
+    function closeConfirmPopup() {
+      document.getElementById("confirmPopup").classList.add("hidden");
+      selectedCandidate = null;
+    }
+
+    function confirmVote() {
+      if (!selectedCandidate) return;
+      castVote(selectedCandidate);
+      closeConfirmPopup();
+    }
+
+    /* ===== Voting Logic ===== */
+    function castVote(candidateName) {
+      let user = JSON.parse(localStorage.getItem("user"));
+
+      if (!user) {
+        showPopup("⚠️ Please login first!", "warning");
+        setTimeout(() => (window.location.href = "login.html"), 1500);
+        return;
+      }
+
+      user.votes = user.votes || [];
+      const alreadyVoted = user.votes.some(v => v.election === electionName);
+      if (alreadyVoted) {
+        showPopup("❌ You have already voted in this election!", "error");
+        return;
+      }
+
+      user.votes.push({
+        election: electionName,
+        candidate: candidateName,
+        date: new Date().toLocaleString(),
+      });
+      localStorage.setItem("user", JSON.stringify(user));
+      showPopup(`✅ Your vote for ${candidateName} has been recorded!`, "success");
+      setTimeout(() => (window.location.href = "dashboard.html"), 2000);
+    }
+
+    /* ===== Popup Notification ===== */
+    function showPopup(message, type = "success") {
+      const popup = document.createElement("div");
+      popup.className = `popup-message popup-${type}`;
+      popup.innerText = message;
+      document.body.appendChild(popup);
+      setTimeout(() => popup.classList.add("show"), 10);
+      setTimeout(() => {
+        popup.classList.remove("show");
+        setTimeout(() => popup.remove(), 300);
+      }, 4000);
+    }
+
+    /* ===== Navbar Dropdown ===== */
+    const profileIcon = document.querySelector(".profile-icon");
+    const dropdown = document.querySelector(".dropdown");
+    profileIcon.addEventListener("click", (e) => {
+      dropdown.classList.toggle("hidden");
+      e.stopPropagation();
+    });
+    document.addEventListener("click", (e) => {
+      if (!dropdown.contains(e.target)) dropdown.classList.add("hidden");
+    });
+
+    /* ===== Logout ===== */
+    function logoutUser() {
+      localStorage.removeItem("user");
+      window.location.href = "login.html";
+    }
+  </script>
+
+  <style>
+    .candidate-card {
+      text-align: center;
+      padding-top: 15px;
+    }
+
+    .candidate-icon {
+      font-size: 60px;
+      color: #001a66;
+      margin-bottom: 10px;
+    }
+
+    .candidate-card h3 {
+      margin-bottom: 6px;
+      color: #001a66;
+    }
+
+    .candidate-card p {
+      margin-bottom: 10px;
+      color: #333;
+    }
+
+    /* ===== Popup message (Top-right alert) ===== */
+    .popup-message {
+      position: fixed;
+      top: 20px;
+      right: 25px;
+      background: #ffffff;
+      color: #001a66;
+      border-left: 5px solid #ffcc00;
+      padding: 14px 20px;
+      border-radius: 8px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+      font-weight: 600;
+      font-size: 0.95rem;
+      opacity: 0;
+      transform: translateY(-20px);
+      transition: all 0.4s ease;
+      z-index: 9999;
+    }
+
+    .popup-message.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .popup-success { border-left-color: #00b300; }
+    .popup-error { border-left-color: #ff3333; }
+    .popup-warning { border-left-color: #ffcc00; }
+
+    /* ===== Confirmation Popup ===== */
+    .confirm-popup {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: rgba(0, 0, 0, 0.6);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 10000;
+      opacity: 1;
+      transition: opacity 0.3s ease;
+    }
+
+    .confirm-popup.hidden {
+      display: none;
+      opacity: 0;
+    }
+
+    .confirm-box {
+      background: #fff;
+      border-radius: 10px;
+      padding: 25px 30px;
+      text-align: center;
+      width: 350px;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+      animation: fadeIn 0.3s ease;
+    }
+
+    .confirm-box h3 {
+      margin-bottom: 10px;
+      color: #001a66;
+    }
+
+    .confirm-box p {
+      font-size: 1rem;
+      color: #333;
+      margin-bottom: 20px;
+    }
+
+    .confirm-buttons {
+      display: flex;
+      justify-content: space-around;
+    }
+
+    .confirm-btn {
+      padding: 8px 16px;
+      border: none;
+      border-radius: 6px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+
+    .confirm-btn.cancel {
+      background: #ddd;
+      color: #333;
+    }
+
+    .confirm-btn.cancel:hover {
+      background: #bbb;
+    }
+
+    .confirm-btn.proceed {
+      background: #001a66;
+      color: #fff;
+    }
+
+    .confirm-btn.proceed:hover {
+      background: #002b99;
+    }
+
+    @keyframes fadeIn {
+      from { transform: scale(0.95); opacity: 0; }
+      to { transform: scale(1); opacity: 1; }
+    }
+  </style>
+</body>
+</html>
