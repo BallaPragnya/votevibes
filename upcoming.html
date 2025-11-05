@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Upcoming Elections | VoteVibes</title>
+  <link rel="stylesheet" href="dashboard.css" />
+  <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+  />
+</head>
+
+<body>
+
+  <!-- Navbar -->
+  <header class="navbar">
+    <div class="logo"><i class="fa-solid fa-dove"></i> VoteVibes</div>
+    <ul class="nav-links">
+      <li><a href="dashboard.html">Dashboard</a></li>
+      <li><a href="active.html">Active Elections</a></li>
+      <li><a href="result.html">Results</a></li>
+      <li><a href="upcoming.html" class="active">Upcoming</a></li>
+    </ul>
+
+    <div class="nav-actions">
+      <div class="profile-menu">
+        <i class="fa-solid fa-circle-user profile-icon"></i>
+        <div class="dropdown hidden">
+          <a href="profile.html"><i class="fa-solid fa-user"></i> Profile</a>
+          <a onclick="logoutUser()"><i class="fa-solid fa-right-from-bracket"></i> Logout</a>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Header -->
+  <section class="welcome">
+    <h2>🕒 Upcoming Elections</h2>
+    <p>Stay informed about future elections that will open soon.</p>
+  </section>
+
+  <!-- Main -->
+  <main class="features" id="upcomingElectionsContainer">
+    <!-- Elections will load dynamically here -->
+  </main>
+
+  <!-- Footer -->
+  <footer class="site-footer">
+    <div class="footer-content">
+      <div>
+        <h4>About VoteVibes</h4>
+        <p>Secure, transparent and student-friendly voting system.</p>
+      </div>
+      <div>
+        <h4>Quick Links</h4>
+        <ul>
+          <li><a href="voter-dashboard.html">Dashboard</a></li>
+          <li><a href="active.html">Active Elections</a></li>
+          <li><a href="result.html">Results</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">&copy; 2025 VoteVibes. All Rights Reserved.</div>
+  </footer>
+
+  <script>
+    // ==== Navbar Dropdown ====
+    const profileIcon = document.querySelector(".profile-icon");
+    const dropdown = document.querySelector(".dropdown");
+    profileIcon.addEventListener("click", (e) => {
+      dropdown.classList.toggle("hidden");
+      e.stopPropagation();
+    });
+    document.addEventListener("click", (e) => {
+      if (!dropdown.contains(e.target)) dropdown.classList.add("hidden");
+    });
+
+    // ==== Sample Elections (ISO format for backend-safe date storage) ====
+    const elections = [
+      {
+        name: "Student Council Election 2025",
+        startDate: "2025-11-04",
+        endDate: "2025-12-10",
+        isActive: true,
+      },
+      {
+        name: "Sports Captain Election 2026",
+        startDate: "2026-01-05",
+        endDate: "2026-01-18",
+        isActive: false,
+      },
+      {
+        name: "Department Head Election 2026",
+        startDate: "2026-02-10",
+        endDate: "2026-02-20",
+        isActive: false,
+      }
+    ];
+
+    const container = document.getElementById("upcomingElectionsContainer");
+
+    // Filter only upcoming elections
+    const upcomingElections = elections.filter(e => !e.isActive);
+
+    if (upcomingElections.length === 0) {
+      container.innerHTML = `
+        <p style="text-align:center; color:#001a66; font-weight:500; font-size:1.1rem; margin-top:30px;">
+          No upcoming elections yet 🕒
+        </p>`;
+    } else {
+      upcomingElections.forEach(election => {
+        // Format dates to DD-MM-YYYY
+        const formattedStart = new Date(election.startDate).toLocaleDateString('en-GB');
+        const formattedEnd = new Date(election.endDate).toLocaleDateString('en-GB');
+
+        const card = document.createElement("div");
+        card.className = "card";
+        card.innerHTML = `
+          <h3>${election.name}</h3>
+          <p><strong>Start Date:</strong> ${formattedStart}</p>
+          <p><strong>End Date:</strong> ${formattedEnd}</p>
+          <p><strong>Status:</strong> <span style='color:#ff9900;'>Upcoming 🕒</span></p>
+          <p><em>Voting will open soon.</em></p>
+        `;
+        container.appendChild(card);
+      });
+    }
+
+    // ==== Logout ====
+    function logoutUser() {
+      localStorage.removeItem("user");
+      window.location.href = "login.html";
+    }
+  </script>
+
+</body>
+</html>
