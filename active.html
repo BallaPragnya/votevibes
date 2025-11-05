@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Active Elections | VoteVibes</title>
+  <link rel="stylesheet" href="dashboard.css" />
+  <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+  />
+</head>
+<body>
+
+  <!-- Navbar -->
+  <header class="navbar">
+    <div class="logo"><i class="fa-solid fa-dove"></i> VoteVibes</div>
+    <ul class="nav-links">
+      <li><a href="dashboard.html">Dashboard</a></li>
+      <li><a href="active.html" class="active">Active Elections</a></li>
+      <li><a href="result.html">Results</a></li>
+      <li><a href="upcoming.html">Upcoming Elections</a></li>
+    </ul>
+
+    <div class="nav-actions">
+      <div class="profile-menu">
+        <i class="fa-solid fa-circle-user profile-icon"></i>
+        <div class="dropdown hidden">
+          <a href="profile.html"><i class="fa-solid fa-user"></i> Profile</a>
+          <a onclick="logoutUser()"><i class="fa-solid fa-right-from-bracket"></i> Logout</a>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Header Section -->
+  <section class="welcome">
+    <h2>🟢 Active Elections</h2>
+    <p>Choose an election below to cast your vote.</p>
+  </section>
+
+  <!-- Election Cards -->
+  <main class="features" id="activeElectionsContainer">
+    <!-- Active elections will appear here -->
+  </main>
+
+  <!-- Footer -->
+  <footer class="site-footer">
+    <div class="footer-content">
+      <div>
+        <h4>About VoteVibes</h4>
+        <p>Secure, transparent, and student-friendly voting system.</p>
+      </div>
+      <div>
+        <h4>Quick Links</h4>
+        <ul>
+          <li><a href="dashboard.html">Dashboard</a></li>
+          <li><a href="result.html">Results</a></li>
+          <li><a href="upcoming.html">Upcoming</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">&copy; 2025 VoteVibes. All Rights Reserved.</div>
+  </footer>
+
+  <script>
+    // ==== Sample Election Data ====
+    const elections = [
+      {
+        name: "Student Council Election 2025",
+        startDate: "04-11-2025",
+        endDate: "10-12-2025",
+        isActive: true,
+      },
+      {
+        name: "Sports Captain Election 2026",
+        startDate: "05-01-2026",
+        endDate: "18-01-2026",
+        isActive: true,
+      }
+    ];
+
+    const container = document.getElementById("activeElectionsContainer");
+
+    const activeElections = elections.filter(e => e.isActive);
+
+    if (activeElections.length === 0) {
+      container.innerHTML = `
+        <p style="text-align:center; color:#001a66; font-weight:500; font-size:1.1rem; margin-top:30px;">
+          No active elections at the moment 🕒
+        </p>`;
+    } else {
+      activeElections.forEach(election => {
+        const card = document.createElement("div");
+        card.className = "card";
+        card.innerHTML = `
+          <h3>${election.name}</h3>
+          <p><strong>Start Date:</strong> ${election.startDate}</p>
+          <p><strong>End Date:</strong> ${election.endDate}</p>
+          <p><strong>Status:</strong> <span style='color:green;'>Active 🟢</span></p>
+          <a href="ballot.html?election=${encodeURIComponent(election.name)}" class="small-btn">Go to Ballot</a>
+        `;
+        container.appendChild(card);
+      });
+    }
+
+    // ==== Navbar Dropdown ====
+    const profileIcon = document.querySelector(".profile-icon");
+    const dropdown = document.querySelector(".dropdown");
+    profileIcon.addEventListener("click", (e) => {
+      dropdown.classList.toggle("hidden");
+      e.stopPropagation();
+    });
+    document.addEventListener("click", (e) => {
+      if (!dropdown.contains(e.target)) dropdown.classList.add("hidden");
+    });
+
+    // ==== Logout ====
+    function logoutUser() {
+      localStorage.removeItem("user");
+      window.location.href = "login.html";
+    }
+  </script>
+</body>
+</html>
