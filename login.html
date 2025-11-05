@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Login | VoteVibes</title>
+
+  <link rel="stylesheet" href="./login.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <script src="https://accounts.google.com/gsi/client" async defer></script>
+
+  <style>
+    /* ===== Google Button (Keep Original Google Style) ===== */
+    .google-signin {
+      display: flex;
+      justify-content: center;
+      margin-top: 20px;
+    }
+
+    .google-btn-wrapper {
+      width: 100%;
+    }
+
+    .custom-google-btn {
+      width: 100%;
+      background-color: #fff;
+      border: 1px solid #dcdcdc;
+      border-radius: 6px;
+      padding: 10px;
+      cursor: pointer;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      color: #333;
+      transition: all 0.25s ease;
+    }
+
+    .custom-google-btn:hover {
+      background-color: #f8f8f8;
+      border-color: #bbb;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12);
+    }
+
+    .custom-google-btn img {
+      width: 20px;
+      height: 20px;
+    }
+
+    /* ===== OR Divider ===== */
+    .divider {
+      text-align: center;
+      margin: 20px 0;
+      position: relative;
+    }
+
+    .divider::before,
+    .divider::after {
+      content: '';
+      position: absolute;
+      top: 50%;
+      width: 40%;
+      height: 1px;
+      background: #ddd;
+    }
+
+    .divider::before {
+      left: 0;
+    }
+
+    .divider::after {
+      right: 0;
+    }
+
+    .divider span {
+      padding: 0 10px;
+      color: #666;
+      background: #fff;
+      position: relative;
+      z-index: 1;
+      font-size: 0.95rem;
+    }
+
+    /* ===== Toast (Popup) ===== */
+    .toast {
+      position: fixed;
+      right: 25px;
+      bottom: 25px;
+      background: #001a66;
+      color: #ffcc00;
+      padding: 15px 25px;
+      border-radius: 8px;
+      box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      opacity: 0;
+      transform: translateY(20px);
+      transition: all 0.4s ease;
+      z-index: 9999;
+    }
+
+    .toast.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .toast i {
+      color: #ffcc00;
+      font-size: 1.2rem;
+    }
+  </style>
+</head>
+<body>
+  <!-- ===== Navbar ===== -->
+  <nav class="navbar">
+    <div class="logo"><i class="fa-solid fa-dove"></i> VoteVibes</div>
+    <ul class="nav-links">
+      <li><a href="index.html">Home</a></li>
+      <!-- <li><a href="upcoming.html">Upcoming Elections</a></li> -->
+      <!-- <li><a href="register.html">Election Registration</a></li> -->
+    </ul>
+  </nav>
+
+  <!-- ===== Main ===== -->
+  <main>
+    <div class="form-container">
+      <h2>Login</h2>
+
+      <form id="loginForm">
+        <label for="identifier">College Email</label>
+        <input type="text" id="identifier" placeholder="Email" required />
+
+        <label for="password">Password</label>
+        <div class="password-container">
+          <input type="password" id="password" placeholder="Enter your password" required />
+          <i class="fa-solid fa-eye" id="togglePassword"></i>
+        </div>
+
+        <div class="forgot-link">
+          <a href="forgot.html">Forgot Password?</a>
+        </div>
+
+        <div id="otpContainer">
+          <label>Enter OTP</label>
+          <input type="text" id="otp" placeholder="Enter OTP" />
+          <button type="button" class="btn btn-tertiary" id="resendOtpBtn">Resend OTP</button>
+        </div>
+
+        <button type="button" class="btn btn-secondary" id="sendOtpBtn">Send OTP</button>
+        <button type="submit" class="btn btn-primary">Login</button>
+        <p class="register-text">
+        Don't have an account?
+        <a href="register.html">Register</a>
+      </p>
+
+      </form>
+
+      <!-- Divider -->
+      <div class="divider"><span>OR</span></div>
+
+      <!-- Continue with Google -->
+      <div class="google-signin">
+        <div class="google-btn-wrapper">
+          <div class="custom-google-btn" id="googleCustomBtn">
+            <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google logo" />
+            <span>Continue with Google</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <p>© 2025 VoteVibes. All Rights Reserved.</p>
+  </footer>
+
+  <div id="toast" class="toast"><i class="fa-solid fa-circle-info"></i><span id="toastMessage"></span></div>
+
+  <!-- ===== Scripts ===== -->
+  <script src="./login.js"></script>
+
+  <!-- ===== Google Sign-In Moved Here ===== -->
+  <script>
+    const CLIENT_ID = "970706649931-jh3jhoqe03b5dnv2ctj4jemf7fsbbbr5.apps.googleusercontent.com";
+
+    function showToast(message) {
+      const toast = document.getElementById("toast");
+      const toastMessage = document.getElementById("toastMessage");
+      toastMessage.textContent = message;
+      toast.classList.add("show");
+      setTimeout(() => toast.classList.remove("show"), 3000);
+    }
+
+    // Initialize Google OAuth 2.0 Client
+    window.onload = function () {
+      const tokenClient = google.accounts.oauth2.initTokenClient({
+        client_id: CLIENT_ID,
+        scope: 'email profile openid',
+        callback: (tokenResponse) => {
+          if (tokenResponse && tokenResponse.access_token) {
+            showToast("Google Sign-In Successful!");
+            setTimeout(() => (window.location.href = "dashboard.html"), 1000);
+          } else {
+            showToast("Google Sign-In Failed!");
+          }
+        },
+      });
+
+      document.getElementById("googleCustomBtn").addEventListener("click", () => {
+        tokenClient.requestAccessToken();
+      });
+    };
+  </script>
+</body>
+</html>
